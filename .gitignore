@@ -1,0 +1,20 @@
+# Secrets: never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Environments / IDE / OS
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.idea/
+.DS_Store
+*.log
+
+# Copyrighted music and personal photos: kept local only
+music/*.mp3
+Outfit_reference/

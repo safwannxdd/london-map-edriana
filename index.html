@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Here, There and Everywhere</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- The game world is drawn on this canvas -->
+  <canvas id="game"></canvas>
+
+  <!-- ===== HUD (top bar) ===== -->
+  <div id="hud" class="hidden">
+    <div class="hud-group">
+      <span class="clock">LONDON <b id="t-lon">--:--</b></span>
+      <span class="clock">KL <b id="t-kl">--:--</b></span>
+    </div>
+    <div id="hud-hover"></div>
+    <div class="hud-group">
+      <span id="counter"><i class="px-heart"></i> 0/0</span>
+      <button id="btn-map" title="Map (M)">MAP</button>
+      <button id="btn-letter" class="hidden" title="Read the letter">LETTER</button>
+      <button id="btn-settings" title="Settings">SETTINGS</button>
+    </div>
+  </div>
+
+  <!-- Minimap (click to open the full map) -->
+  <canvas id="minimap" class="hidden" title="Open map (M)"></canvas>
+
+  <!-- Small hint shown when standing at a landmark -->
+  <div id="prompt" class="hidden"></div>
+
+  <!-- ===== Dialog box ===== -->
+  <div id="dialog" class="hidden">
+    <div class="dlg-body">
+      <div class="dlg-head">
+        <canvas id="dlg-icon" width="13" height="13"></canvas>
+        <span id="dlg-name"></span>
+        <span id="dlg-tag" class="tag"></span>
+        <span id="dlg-love" class="love-chip"></span>
+      </div>
+      <p id="dlg-text"></p>
+      <div class="dlg-foot">
+        <button id="dlg-tube" class="hidden">TAKE THE TUBE (T)</button>
+        <span id="dlg-page"></span>
+        <span id="dlg-next">&#9660;</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Travel / tube / bus menu ===== -->
+  <div id="menu" class="overlay hidden">
+    <div class="panel">
+      <h2 id="menu-title">WHERE TO?</h2>
+      <div id="menu-list"></div>
+      <button id="menu-cancel" class="ghost">CANCEL (ESC)</button>
+    </div>
+  </div>
+
+  <!-- Train ride transition -->
+  <canvas id="train" class="hidden"></canvas>
+
+  <!-- ===== Full screen map (M) ===== -->
+  <div id="bigmap" class="overlay hidden">
+    <div class="bigmap-wrap">
+      <canvas id="bigmap-canvas"></canvas>
+      <div id="bigmap-label">Click a place to walk there</div>
+      <button id="bigmap-close" class="ghost">CLOSE (M)</button>
+    </div>
+  </div>
+
+  <!-- ===== Title screen ===== -->
+  <div id="title" class="screen">
+    <canvas id="title-canvas"></canvas>
+    <h1 id="title-song">Here, There and Everywhere</h1>
+    <p id="title-sub"></p>
+    <div class="title-buttons">
+      <button id="btn-start" disabled>LOADING...</button>
+      <button id="btn-howto">HOW TO PLAY</button>
+      <button id="btn-wardrobe">OUTFITS</button>
+      <button id="btn-settings-title">SETTINGS</button>
+    </div>
+    <button id="btn-reset" class="link hidden">start over</button>
+  </div>
+
+  <!-- ===== How to play (a little picture book) ===== -->
+  <div id="howto" class="screen hidden">
+    <div class="howto-card">
+      <div id="howto-step">PAGE 1 OF 6</div>
+      <canvas id="howto-canvas"></canvas>
+      <h2 id="howto-title"></h2>
+      <p id="howto-text"></p>
+      <div id="howto-dots"></div>
+      <div class="howto-nav">
+        <button id="howto-back">&lt; BACK</button>
+        <button id="howto-next">NEXT &gt;</button>
+      </div>
+    </div>
+    <button id="howto-skip" class="link">skip</button>
+  </div>
+
+  <!-- ===== Wardrobe: pick our outfits ===== -->
+  <div id="wardrobe" class="screen hidden">
+    <h2 class="wardrobe-title">WARDROBE</h2>
+    <p class="wardrobe-sub">dress us up for a day out in London</p>
+    <div class="wardrobe-cards">
+      <div class="wardrobe-card" data-who="me">
+        <h3 class="wd-name"></h3>
+        <canvas class="wd-preview"></canvas>
+        <div class="wd-row"><span>OUTFIT</span><button class="wd-prev" data-k="outfit">&lt;</button><b class="wd-outfit"></b><button class="wd-next" data-k="outfit">&gt;</button></div>
+        <div class="wd-row"><span>EXTRA</span><button class="wd-prev" data-k="acc">&lt;</button><b class="wd-acc"></b><button class="wd-next" data-k="acc">&gt;</button></div>
+        <div class="wd-row"><span>CHARM</span><button class="wd-prev" data-k="charm">&lt;</button><b class="wd-charm"></b><button class="wd-next" data-k="charm">&gt;</button></div>
+      </div>
+      <div class="wardrobe-card" data-who="her">
+        <h3 class="wd-name"></h3>
+        <canvas class="wd-preview"></canvas>
+        <div class="wd-row"><span>OUTFIT</span><button class="wd-prev" data-k="outfit">&lt;</button><b class="wd-outfit"></b><button class="wd-next" data-k="outfit">&gt;</button></div>
+        <div class="wd-row"><span>EXTRA</span><button class="wd-prev" data-k="acc">&lt;</button><b class="wd-acc"></b><button class="wd-next" data-k="acc">&gt;</button></div>
+        <div class="wd-row"><span>CHARM</span><button class="wd-prev" data-k="charm">&lt;</button><b class="wd-charm"></b><button class="wd-next" data-k="charm">&gt;</button></div>
+      </div>
+    </div>
+    <div class="wardrobe-buttons">
+      <button id="wd-random">RANDOMISE</button>
+      <button id="wd-done">DONE</button>
+    </div>
+  </div>
+
+  <!-- ===== Settings ===== -->
+  <div id="settings" class="overlay hidden">
+    <div class="settings-card">
+      <h2>SETTINGS</h2>
+      <div class="set-row">
+        <span>ZOOM</span>
+        <button id="zoom-out" title="Zoom out">-</button>
+        <b id="zoom-val">NORMAL</b>
+        <button id="zoom-in" title="Zoom in">+</button>
+      </div>
+      <div class="set-row">
+        <span>MUSIC</span>
+        <button id="music-toggle" class="toggle">ON</button>
+        <input type="range" id="music-vol" min="0" max="100" step="5" aria-label="Music volume">
+        <i id="music-vol-val">70</i>
+      </div>
+      <div class="set-row set-track">
+        <span>SONG</span>
+        <button id="track-prev" title="Previous song">&lt;&lt;</button>
+        <b id="now-playing">-</b>
+        <button id="track-next" title="Next song">&gt;&gt;</button>
+      </div>
+      <div class="set-row">
+        <span>SOUND FX</span>
+        <button id="sfx-toggle" class="toggle">ON</button>
+        <input type="range" id="sfx-vol" min="0" max="100" step="5" aria-label="Sound effects volume">
+        <i id="sfx-vol-val">60</i>
+      </div>
+      <div class="set-buttons">
+        <button id="set-help">HOW TO PLAY</button>
+        <button id="set-menu" class="hidden">MAIN MENU</button>
+        <button id="set-close">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Ending screen ===== -->
+  <div id="ending" class="screen hidden">
+    <canvas id="ending-canvas"></canvas>
+    <div id="letter"></div>
+    <button id="btn-keep" disabled>KEEP EXPLORING</button>
+  </div>
+
+  <!-- Plain script tags (no modules / fetch, so it works from file://) -->
+  <script src="config.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
